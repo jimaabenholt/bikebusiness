@@ -11,344 +11,255 @@
 
 <body>
 
-    <header>
-        <h1>Administration</h1>
-        <p>Bikebusiness</p>
-    </header>
+<header>
+    <h1>Administration</h1>
+    <p>Bikebusiness</p>
+</header>
 
-    <main>
+<main>
 
-        <!-- LOGIN -->
+    <!-- LOGIN -->
 
-        <section id="login-section">
+    <section id="login-section">
 
-            <h2>Login</h2>
+        <h2>Login</h2>
 
-            <form id="login-form">
+        <form id="login-form">
+
+            <p>
+                <label for="email">E-mail</label><br>
+                <input type="email" id="email" required>
+            </p>
+
+            <p>
+                <label for="password">Password</label><br>
+                <input type="password" id="password" required>
+            </p>
+
+            <button type="submit">Log ind</button>
+
+        </form>
+
+        <p id="login-message"></p>
+
+    </section>
+
+
+    <!-- ADMIN -->
+
+    <section id="admin-section" hidden>
+
+        <h2>Cykler</h2>
+
+        <p>
+            <button id="new-bike-button">
+                + Ny cykel
+            </button>
+
+            <button id="logout-button">
+                Log ud
+            </button>
+        </p>
+
+
+        <!-- CYKELFORMULAR -->
+
+        <section id="bike-form-section" hidden>
+
+            <h2 id="bike-form-title">
+                Ny cykel
+            </h2>
+
+            <form id="bike-form">
+
+                <input type="hidden" id="bike-id">
+
 
                 <p>
-                    <label for="email">E-mail</label><br>
+                    <label for="bike-number">Bike ID</label><br>
+                    <input type="text" id="bike-number" required readonly>
+                </p>
+
+
+                <p>
+                    <label for="brand">Mærke *</label><br>
+                    <input type="text" id="brand" required>
+                </p>
+
+
+                <p>
+                    <label for="model">Model</label><br>
+                    <input type="text" id="model">
+                </p>
+
+
+                <p>
+                    <label for="category">Kategori</label><br>
+                    <input type="text" id="category">
+                </p>
+
+
+                <p>
+                    <label for="frame-size">Stelstørrelse</label><br>
+                    <input type="text" id="frame-size">
+                </p>
+
+
+                <p>
+                    <label for="wheel-size">Hjulstørrelse</label><br>
+                    <input type="text" id="wheel-size">
+                </p>
+
+
+                <p>
+                    <label for="gears">Antal gear</label><br>
+                    <input type="number" id="gears" min="0">
+                </p>
+
+
+                <p>
+                    <label for="color">Farve</label><br>
+                    <input type="text" id="color">
+                </p>
+
+
+                <p>
+                    <label for="frame-number">Stelnummer</label><br>
+                    <input type="text" id="frame-number">
+                </p>
+
+
+                <p>
+                    <label for="purchase-price">Indkøbspris</label><br>
+                    <input
+                        type="number"
+                        id="purchase-price"
+                        min="0"
+                        step="0.01"
+                    >
+                </p>
+
+
+                <p>
+                    <label for="purchase-source">Indkøbskilde</label><br>
+                    <input type="text" id="purchase-source">
+                </p>
+
+
+                <p>
+                    <label for="sales-description">Salgstekst</label><br>
+
+                    <textarea
+                        id="sales-description"
+                        rows="6"
+                    ></textarea>
+                </p>
+
+
+                <p>
+                    <label for="asking-price">Salgspris</label><br>
 
                     <input
-                        type="email"
-                        id="email"
-                        required
+                        type="number"
+                        id="asking-price"
+                        min="0"
+                        step="0.01"
+                    >
+                </p>
+
+
+                <p>
+                    <label for="status">Status</label><br>
+
+                    <select id="status">
+
+                        <option value="DRAFT">
+                            DRAFT
+                        </option>
+
+                        <option value="FOR_SALE">
+                            FOR_SALE
+                        </option>
+
+                        <option value="SOLD">
+                            SOLD
+                        </option>
+
+                    </select>
+                </p>
+
+
+                <!-- BILLEDER -->
+
+                <hr>
+
+                <h3>Billeder</h3>
+
+                <p>
+                    Upload op til 12 billeder.
+                    Billede nr. 1 er cyklens hovedbillede.
+                </p>
+
+                <p>
+                    <input
+                        type="file"
+                        id="bike-images"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
                     >
                 </p>
 
                 <p>
-                    <label for="password">Password</label><br>
-
-                    <input
-                        type="password"
-                        id="password"
-                        required
+                    <button
+                        type="button"
+                        id="upload-images-button"
                     >
+                        Upload billeder
+                    </button>
                 </p>
 
-                <button type="submit">
-                    Log ind
-                </button>
+                <p id="image-upload-message"></p>
+
+                <div id="current-bike-images"></div>
+
+
+                <!-- GEM -->
+
+                <hr>
+
+                <p>
+                    <button type="submit">
+                        Gem cykel
+                    </button>
+
+                    <button
+                        type="button"
+                        id="cancel-bike-form"
+                    >
+                        Annuller
+                    </button>
+                </p>
+
+                <p id="bike-form-message"></p>
 
             </form>
 
-            <p id="login-message"></p>
-
         </section>
 
 
-        <!-- ADMIN -->
+        <!-- LISTE -->
 
-        <section id="admin-section" hidden>
+        <div id="admin-bike-list">
+            <p>Henter cykler...</p>
+        </div>
 
-            <h2>Cykler</h2>
+    </section>
 
-            <p>
-                <button id="new-bike-button">
-                    + Ny cykel
-                </button>
+</main>
 
-                <button id="logout-button">
-                    Log ud
-                </button>
-            </p>
 
-
-            <!-- OPRET / REDIGER CYKEL -->
-
-            <section id="bike-form-section" hidden>
-
-                <h2 id="bike-form-title">
-                    Ny cykel
-                </h2>
-
-                <form id="bike-form">
-
-                    <input
-                        type="hidden"
-                        id="bike-id"
-                    >
-
-
-                    <p>
-                        <label for="bike-number">
-                            Bike ID
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="bike-number"
-                            required
-                            readonly
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="brand">
-                            Mærke *
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="brand"
-                            required
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="model">
-                            Model
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="model"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="category">
-                            Kategori
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="category"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="frame-size">
-                            Stelstørrelse
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="frame-size"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="wheel-size">
-                            Hjulstørrelse
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="wheel-size"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="gears">
-                            Antal gear
-                        </label><br>
-
-                        <input
-                            type="number"
-                            id="gears"
-                            min="0"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="color">
-                            Farve
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="color"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="frame-number">
-                            Stelnummer
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="frame-number"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="purchase-price">
-                            Indkøbspris
-                        </label><br>
-
-                        <input
-                            type="number"
-                            id="purchase-price"
-                            min="0"
-                            step="0.01"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="purchase-source">
-                            Indkøbskilde
-                        </label><br>
-
-                        <input
-                            type="text"
-                            id="purchase-source"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="sales-description">
-                            Salgstekst
-                        </label><br>
-
-                        <textarea
-                            id="sales-description"
-                            rows="6"
-                        ></textarea>
-                    </p>
-
-
-                    <p>
-                        <label for="asking-price">
-                            Salgspris
-                        </label><br>
-
-                        <input
-                            type="number"
-                            id="asking-price"
-                            min="0"
-                            step="0.01"
-                        >
-                    </p>
-
-
-                    <p>
-                        <label for="status">
-                            Status
-                        </label><br>
-
-                        <select id="status">
-
-                            <option value="DRAFT">
-                                DRAFT
-                            </option>
-
-                            <option value="FOR_SALE">
-                                FOR_SALE
-                            </option>
-
-                            <option value="SOLD">
-                                SOLD
-                            </option>
-
-                        </select>
-                    </p>
-
-
-                    <!-- BILLEDER -->
-
-                    <hr>
-
-                    <h3>Billeder</h3>
-
-                    <p>
-                        <label for="bike-image">
-                            Hovedbillede
-                        </label><br>
-
-                        <input
-                            type="file"
-                            id="bike-image"
-                            accept="image/jpeg,image/png,image/webp"
-                        >
-                    </p>
-
-                    <p>
-                        <button
-                            type="button"
-                            id="upload-image-button"
-                        >
-                            Upload hovedbillede
-                        </button>
-                    </p>
-
-                    <p id="image-upload-message"></p>
-
-                    <div id="current-bike-image"></div>
-
-
-                    <!-- GEM / ANNULLER -->
-
-                    <hr>
-
-                    <p>
-                        <button type="submit">
-                            Gem cykel
-                        </button>
-
-                        <button
-                            type="button"
-                            id="cancel-bike-form"
-                        >
-                            Annuller
-                        </button>
-                    </p>
-
-                    <p id="bike-form-message"></p>
-
-                </form>
-
-            </section>
-
-
-            <!-- CYKELLISTE -->
-
-            <div id="admin-bike-list">
-
-                <p>Henter cykler...</p>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <script src="js/admin.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/admin.js"></script>
 
 </body>
 </html>

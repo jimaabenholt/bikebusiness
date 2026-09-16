@@ -8,6 +8,16 @@ const db = supabase.createClient(
 
 
 // --------------------------------------------------
+// INDSTILLINGER
+// --------------------------------------------------
+
+const IMAGE_BUCKET = "bike-images";
+const MAX_IMAGES = 12;
+const MAX_IMAGE_SIZE = 1600;
+const IMAGE_QUALITY = 0.82;
+
+
+// --------------------------------------------------
 // ELEMENTER
 // --------------------------------------------------
 
@@ -25,7 +35,6 @@ const loginMessage =
 
 const logoutButton =
     document.getElementById("logout-button");
-
 
 const newBikeButton =
     document.getElementById("new-bike-button");
@@ -45,18 +54,17 @@ const cancelBikeFormButton =
 const bikeFormMessage =
     document.getElementById("bike-form-message");
 
+const bikeImagesInput =
+    document.getElementById("bike-images");
 
-const bikeImageInput =
-    document.getElementById("bike-image");
-
-const uploadImageButton =
-    document.getElementById("upload-image-button");
+const uploadImagesButton =
+    document.getElementById("upload-images-button");
 
 const imageUploadMessage =
     document.getElementById("image-upload-message");
 
-const currentBikeImage =
-    document.getElementById("current-bike-image");
+const currentBikeImages =
+    document.getElementById("current-bike-images");
 
 
 // --------------------------------------------------
@@ -65,7 +73,10 @@ const currentBikeImage =
 
 function formatPrice(price) {
 
-    if (price === null || price === undefined) {
+    if (
+        price === null ||
+        price === undefined
+    ) {
         return "-";
     }
 
@@ -79,7 +90,9 @@ function formatPrice(price) {
 function getTextValue(id) {
 
     const value =
-        document.getElementById(id).value.trim();
+        document.getElementById(id)
+            .value
+            .trim();
 
     return value || null;
 }
@@ -98,93 +111,1068 @@ function getNumberValue(id) {
 }
 
 
-// --------------------------------------------------
-// VIS HOVEDBILLEDE
-// --------------------------------------------------
+function imageFileNumber(fileName) {
 
-function showCurrentBikeImage(bikeNumber) {
+    const number =
+        parseInt(fileName, 10);
 
-    currentBikeImage.innerHTML = "";
-
-    if (!bikeNumber) {
-        return;
-    }
+    return Number.isNaN(number)
+        ? 999
+        : number;
+}
 
 
-    const imagePath =
-        `${bikeNumber}/01.png`;
+function imageFileName(index) {
 
-
-    const { data } = db.storage
-        .from("bike-images")
-        .getPublicUrl(imagePath);
-
-
-    const image =
-        document.createElement("img");
-
-
-    image.src =
-        data.publicUrl;
-
-    image.alt =
-        `Hovedbillede af ${bikeNumber}`;
-
-    image.style.maxWidth =
-        "300px";
-
-    image.style.height =
-        "auto";
-
-    image.style.display =
-        "block";
-
-    image.style.marginTop =
-        "10px";
-
-
-    image.onerror = () => {
-
-        currentBikeImage.innerHTML =
-            "<p>Intet hovedbillede uploadet.</p>";
-    };
-
-
-    currentBikeImage.appendChild(image);
+    return (
+        String(index).padStart(2, "0") +
+        ".webp"
+    );
 }
 
 
 // --------------------------------------------------
-// HENT CYKLER TIL ADMIN
+// PUBLIC IMAGE URL
+// --------------------------------------------------
+
+function getPublicImageUrl(path) {
+
+    const { data } =
+        db.storage
+            .from(IMAGE_BUCKET)
+            .getPublicUrl(path);
+
+    return data.publicUrl;
+}
+
+
+// --------------------------------------------------
+// HENT BILLEDER
+// --------------------------------------------------
+
+async function getBikeImages(bikeNumber) {
+
+    const { data, error } =
+        await db.storage
+            .from(IMAGE_BUCKET)
+            .list(
+                bikeNumber,
+                {
+                    limit: 100
+                }
+            );
+
+
+    if (error) {
+
+        console.error(
+            "Kunne ikke hente billeder:",
+            error
+        );
+
+        return [];
+    }
+
+
+    if (!data) {
+        return [];
+    }
+
+
+    const images =
+        data.filter(file =>
+            /\.(webp|jpg|jpeg|png)$/i.test(
+                file.name
+            )
+        );
+
+
+    const webpImages =
+        images.filter(file =>
+            /\.webp$/i.test(file.name)
+        );
+
+
+    const selectedImages =
+        webpImages.length > 0
+            ? webpImages
+            : images;
+
+
+    selectedImages.sort(
+        (a, b) =>
+            imageFileNumber(a.name) -
+            imageFileNumber(b.name)
+    );
+
+
+    return selectedImages.map(file => ({
+        name: file.name,
+        path: `${bikeNumber}/${file.name}`
+    }));
+}
+
+
+// --------------------------------------------------
+// VIS BILLEDER I ADMIN
+// --------------------------------------------------
+
+async function showCurrentBikeImages(
+    bikeNumber
+) {
+
+    currentBikeImages.innerHTML =
+        "<p>Henter billeder...</p>";
+
+
+    const images =
+        await getBikeImages(
+            bikeNumber
+        );
+
+
+    currentBikeImages.innerHTML = "";
+
+
+    if (images.length === 0) {
+
+        currentBikeImages.innerHTML =
+            "<p>Ingen billeder uploadet endnu.</p>";
+
+        return;
+    }
+
+
+    images.forEach(
+        (imageInfo, index) => {
+
+            const wrapper =
+                document.createElement("div");
+
+
+            wrapper.style.display =
+                "inline-block";
+
+            wrapper.style.margin =
+                "0 14px 20px 0";
+
+            wrapper.style.verticalAlign =
+                "top";
+
+            wrapper.style.width =
+                "210px";
+
+
+            // ------------------------------
+            // BILLEDE
+            // ------------------------------
+
+            const image =
+                document.createElement("img");
+
+
+            image.src =
+                getPublicImageUrl(
+                    imageInfo.path
+                ) +
+                `?v=${Date.now()}-${Math.random()}`;
+
+
+            image.alt =
+                `${bikeNumber} billede ${index + 1}`;
+
+
+            image.style.width =
+                "210px";
+
+            image.style.height =
+                "150px";
+
+            image.style.objectFit =
+                "cover";
+
+            image.style.display =
+                "block";
+
+
+            // ------------------------------
+            // LABEL
+            // ------------------------------
+
+            const label =
+                document.createElement("p");
+
+
+            label.style.margin =
+                "6px 0";
+
+
+            if (index === 0) {
+
+                label.innerHTML =
+                    "<strong>★ Hovedbillede</strong>";
+
+            } else {
+
+                label.textContent =
+                    `Billede ${index + 1}`;
+            }
+
+
+            // ------------------------------
+            // KNAPPER
+            // ------------------------------
+
+            const controls =
+                document.createElement("div");
+
+
+            // FLYT TIDLIGERE
+
+            const leftButton =
+                document.createElement("button");
+
+            leftButton.type =
+                "button";
+
+            leftButton.textContent =
+                "← Tidligere";
+
+            leftButton.disabled =
+                index === 0;
+
+
+            leftButton.addEventListener(
+                "click",
+                async () => {
+
+                    await moveBikeImage(
+                        bikeNumber,
+                        index,
+                        index - 1
+                    );
+                }
+            );
+
+
+            // FLYT SENERE
+
+            const rightButton =
+                document.createElement("button");
+
+            rightButton.type =
+                "button";
+
+            rightButton.textContent =
+                "→ Senere";
+
+            rightButton.disabled =
+                index === images.length - 1;
+
+
+            rightButton.addEventListener(
+                "click",
+                async () => {
+
+                    await moveBikeImage(
+                        bikeNumber,
+                        index,
+                        index + 1
+                    );
+                }
+            );
+
+
+            controls.appendChild(
+                leftButton
+            );
+
+            controls.appendChild(
+                rightButton
+            );
+
+
+            // ------------------------------
+            // GØR TIL HOVEDBILLEDE
+            // ------------------------------
+
+            if (index > 0) {
+
+                const mainButton =
+                    document.createElement("button");
+
+                mainButton.type =
+                    "button";
+
+                mainButton.textContent =
+                    "★ Hovedbillede";
+
+                mainButton.style.display =
+                    "block";
+
+                mainButton.style.marginTop =
+                    "6px";
+
+
+                mainButton.addEventListener(
+                    "click",
+                    async () => {
+
+                        await makeMainImage(
+                            bikeNumber,
+                            index
+                        );
+                    }
+                );
+
+
+                controls.appendChild(
+                    mainButton
+                );
+            }
+
+
+            // ------------------------------
+            // SLET
+            // ------------------------------
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.type =
+                "button";
+
+            deleteButton.textContent =
+                "Slet";
+
+            deleteButton.style.display =
+                "block";
+
+            deleteButton.style.marginTop =
+                "6px";
+
+
+            deleteButton.addEventListener(
+                "click",
+                async () => {
+
+                    const confirmed =
+                        confirm(
+                            `Vil du slette billede ${index + 1}?`
+                        );
+
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+
+                    await deleteBikeImage(
+                        bikeNumber,
+                        index
+                    );
+                }
+            );
+
+
+            controls.appendChild(
+                deleteButton
+            );
+
+
+            wrapper.appendChild(
+                image
+            );
+
+            wrapper.appendChild(
+                label
+            );
+
+            wrapper.appendChild(
+                controls
+            );
+
+
+            currentBikeImages.appendChild(
+                wrapper
+            );
+        }
+    );
+}
+
+
+// --------------------------------------------------
+// KOMPRESSER BILLEDE
+// --------------------------------------------------
+
+function compressImage(file) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const image =
+                new Image();
+
+            const objectUrl =
+                URL.createObjectURL(file);
+
+
+            image.onload = () => {
+
+                let width =
+                    image.width;
+
+                let height =
+                    image.height;
+
+
+                if (
+                    width > MAX_IMAGE_SIZE ||
+                    height > MAX_IMAGE_SIZE
+                ) {
+
+                    const scale =
+                        Math.min(
+                            MAX_IMAGE_SIZE / width,
+                            MAX_IMAGE_SIZE / height
+                        );
+
+
+                    width =
+                        Math.round(
+                            width * scale
+                        );
+
+                    height =
+                        Math.round(
+                            height * scale
+                        );
+                }
+
+
+                const canvas =
+                    document.createElement(
+                        "canvas"
+                    );
+
+
+                canvas.width =
+                    width;
+
+                canvas.height =
+                    height;
+
+
+                const context =
+                    canvas.getContext("2d");
+
+
+                context.drawImage(
+                    image,
+                    0,
+                    0,
+                    width,
+                    height
+                );
+
+
+                canvas.toBlob(
+                    blob => {
+
+                        URL.revokeObjectURL(
+                            objectUrl
+                        );
+
+
+                        if (!blob) {
+
+                            reject(
+                                new Error(
+                                    "Billedet kunne ikke komprimeres."
+                                )
+                            );
+
+                            return;
+                        }
+
+
+                        resolve(blob);
+
+                    },
+                    "image/webp",
+                    IMAGE_QUALITY
+                );
+            };
+
+
+            image.onerror = () => {
+
+                URL.revokeObjectURL(
+                    objectUrl
+                );
+
+
+                reject(
+                    new Error(
+                        "Billedet kunne ikke læses."
+                    )
+                );
+            };
+
+
+            image.src =
+                objectUrl;
+        }
+    );
+}
+
+
+// --------------------------------------------------
+// DOWNLOAD BILLEDE
+// --------------------------------------------------
+
+async function downloadBikeImage(path) {
+
+    const { data, error } =
+        await db.storage
+            .from(IMAGE_BUCKET)
+            .download(path);
+
+
+    if (error) {
+        throw error;
+    }
+
+
+    return data;
+}
+
+
+// --------------------------------------------------
+// HENT ALLE BILLEDER SOM BLOBS
+// --------------------------------------------------
+
+async function getBikeImageBlobs(
+    bikeNumber
+) {
+
+    const images =
+        await getBikeImages(
+            bikeNumber
+        );
+
+
+    const blobs = [];
+
+
+    for (const image of images) {
+
+        const blob =
+            await downloadBikeImage(
+                image.path
+            );
+
+
+        blobs.push(blob);
+    }
+
+
+    return {
+        images,
+        blobs
+    };
+}
+
+
+// --------------------------------------------------
+// SKRIV BILLEDSERIE ROBUST
+// --------------------------------------------------
+
+async function rewriteBikeImages(
+    bikeNumber,
+    blobs
+) {
+
+    // --------------------------------------------------
+    // 1. FIND NUVÆRENDE FILER
+    // --------------------------------------------------
+
+    const currentImages =
+        await getBikeImages(
+            bikeNumber
+        );
+
+
+    // --------------------------------------------------
+    // 2. UPLOAD MIDLERTIDIGE FILER
+    //
+    // Dermed har vi en kopi i Storage,
+    // før de gamle 01/02/03-filer slettes.
+    // --------------------------------------------------
+
+    const operationId =
+        `${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2)}`;
+
+
+    const temporaryPaths = [];
+
+
+    for (
+        let i = 0;
+        i < blobs.length;
+        i++
+    ) {
+
+        const temporaryPath =
+            `${bikeNumber}/temp-${operationId}-${i + 1}.webp`;
+
+
+        const { error } =
+            await db.storage
+                .from(IMAGE_BUCKET)
+                .upload(
+                    temporaryPath,
+                    blobs[i],
+                    {
+                        upsert: false,
+                        contentType:
+                            "image/webp"
+                    }
+                );
+
+
+        if (error) {
+
+            // Ryd eventuelle temp-filer op
+
+            if (
+                temporaryPaths.length >
+                0
+            ) {
+
+                await db.storage
+                    .from(IMAGE_BUCKET)
+                    .remove(
+                        temporaryPaths
+                    );
+            }
+
+
+            throw error;
+        }
+
+
+        temporaryPaths.push(
+            temporaryPath
+        );
+    }
+
+
+    // --------------------------------------------------
+    // 3. SLET DE GAMLE NUMMEREREDE BILLEDER
+    // --------------------------------------------------
+
+    if (
+        currentImages.length >
+        0
+    ) {
+
+        const oldPaths =
+            currentImages.map(
+                image => image.path
+            );
+
+
+        const { error } =
+            await db.storage
+                .from(IMAGE_BUCKET)
+                .remove(
+                    oldPaths
+                );
+
+
+        if (error) {
+
+            await db.storage
+                .from(IMAGE_BUCKET)
+                .remove(
+                    temporaryPaths
+                );
+
+
+            throw error;
+        }
+    }
+
+
+    // --------------------------------------------------
+    // 4. DOWNLOAD TEMP-FILERNE
+    //
+    // Vi bruger dem som sikker kilde til
+    // den nye nummererede serie.
+    // --------------------------------------------------
+
+    const safeBlobs = [];
+
+
+    for (
+        const temporaryPath
+        of temporaryPaths
+    ) {
+
+        const blob =
+            await downloadBikeImage(
+                temporaryPath
+            );
+
+
+        safeBlobs.push(blob);
+    }
+
+
+    // --------------------------------------------------
+    // 5. OPRET NY 01, 02, 03...
+    // --------------------------------------------------
+
+    const createdPaths = [];
+
+
+    try {
+
+        for (
+            let i = 0;
+            i < safeBlobs.length;
+            i++
+        ) {
+
+            const filePath =
+                `${bikeNumber}/${imageFileName(i + 1)}`;
+
+
+            const { error } =
+                await db.storage
+                    .from(IMAGE_BUCKET)
+                    .upload(
+                        filePath,
+                        safeBlobs[i],
+                        {
+                            upsert: false,
+                            contentType:
+                                "image/webp"
+                        }
+                    );
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            createdPaths.push(
+                filePath
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Fejl under oprettelse af ny billedserie:",
+            error
+        );
+
+
+        throw error;
+    }
+
+
+    // --------------------------------------------------
+    // 6. SLET TEMP-FILER
+    // --------------------------------------------------
+
+    if (
+        temporaryPaths.length >
+        0
+    ) {
+
+        const { error } =
+            await db.storage
+                .from(IMAGE_BUCKET)
+                .remove(
+                    temporaryPaths
+                );
+
+
+        if (error) {
+
+            console.warn(
+                "Temp-filer kunne ikke slettes:",
+                error
+            );
+        }
+    }
+}
+
+
+// --------------------------------------------------
+// FLYT BILLEDE ÉN POSITION
+// --------------------------------------------------
+
+async function moveBikeImage(
+    bikeNumber,
+    fromIndex,
+    toIndex
+) {
+
+    imageUploadMessage.textContent =
+        "Ændrer billedrækkefølge...";
+
+
+    try {
+
+        const {
+            blobs
+        } =
+            await getBikeImageBlobs(
+                bikeNumber
+            );
+
+
+        if (
+            fromIndex < 0 ||
+            toIndex < 0 ||
+            fromIndex >= blobs.length ||
+            toIndex >= blobs.length
+        ) {
+
+            imageUploadMessage.textContent =
+                "";
+
+            return;
+        }
+
+
+        const movedBlob =
+            blobs.splice(
+                fromIndex,
+                1
+            )[0];
+
+
+        blobs.splice(
+            toIndex,
+            0,
+            movedBlob
+        );
+
+
+        await rewriteBikeImages(
+            bikeNumber,
+            blobs
+        );
+
+
+        imageUploadMessage.textContent =
+            "Billedrækkefølgen er ændret.";
+
+
+        await showCurrentBikeImages(
+            bikeNumber
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        imageUploadMessage.textContent =
+            "Kunne ikke ændre billedrækkefølgen.";
+    }
+}
+
+
+// --------------------------------------------------
+// GØR TIL HOVEDBILLEDE
+// --------------------------------------------------
+
+async function makeMainImage(
+    bikeNumber,
+    imageIndex
+) {
+
+    if (imageIndex === 0) {
+        return;
+    }
+
+
+    imageUploadMessage.textContent =
+        "Ændrer hovedbillede...";
+
+
+    try {
+
+        const {
+            blobs
+        } =
+            await getBikeImageBlobs(
+                bikeNumber
+            );
+
+
+        if (
+            imageIndex < 0 ||
+            imageIndex >= blobs.length
+        ) {
+
+            return;
+        }
+
+
+        // Fjern valgt billede fra dets position
+
+        const selectedBlob =
+            blobs.splice(
+                imageIndex,
+                1
+            )[0];
+
+
+        // Sæt det først
+
+        blobs.unshift(
+            selectedBlob
+        );
+
+
+        await rewriteBikeImages(
+            bikeNumber,
+            blobs
+        );
+
+
+        imageUploadMessage.textContent =
+            "Hovedbilledet er ændret.";
+
+
+        await showCurrentBikeImages(
+            bikeNumber
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        imageUploadMessage.textContent =
+            "Hovedbilledet kunne ikke ændres.";
+    }
+}
+
+
+// --------------------------------------------------
+// SLET BILLEDE
+// --------------------------------------------------
+
+async function deleteBikeImage(
+    bikeNumber,
+    deleteIndex
+) {
+
+    imageUploadMessage.textContent =
+        "Sletter billede...";
+
+
+    try {
+
+        const {
+            blobs
+        } =
+            await getBikeImageBlobs(
+                bikeNumber
+            );
+
+
+        if (
+            deleteIndex < 0 ||
+            deleteIndex >= blobs.length
+        ) {
+
+            return;
+        }
+
+
+        blobs.splice(
+            deleteIndex,
+            1
+        );
+
+
+        await rewriteBikeImages(
+            bikeNumber,
+            blobs
+        );
+
+
+        imageUploadMessage.textContent =
+            "Billedet er slettet.";
+
+
+        await showCurrentBikeImages(
+            bikeNumber
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        imageUploadMessage.textContent =
+            "Billedet kunne ikke slettes.";
+    }
+}
+
+
+// --------------------------------------------------
+// ADMIN LISTE
 // --------------------------------------------------
 
 async function loadAdminBikes() {
 
     const bikeList =
-        document.getElementById("admin-bike-list");
+        document.getElementById(
+            "admin-bike-list"
+        );
 
 
     bikeList.innerHTML =
         "<p>Henter cykler...</p>";
 
 
-    const { data, error } = await db
-        .from("bikes")
-        .select(`
-            id,
-            bike_number,
-            brand,
-            model,
-            purchase_price,
-            asking_price,
-            status
-        `)
-        .order("id", { ascending: true });
+    const { data, error } =
+        await db
+            .from("bikes")
+            .select(`
+                id,
+                bike_number,
+                brand,
+                model,
+                purchase_price,
+                asking_price,
+                status
+            `)
+            .order(
+                "id",
+                {
+                    ascending: true
+                }
+            );
 
 
     if (error) {
 
         console.error(error);
+
 
         bikeList.innerHTML =
             "<p>Kunne ikke hente cykler.</p>";
@@ -193,7 +1181,10 @@ async function loadAdminBikes() {
     }
 
 
-    if (data.length === 0) {
+    if (
+        !data ||
+        data.length === 0
+    ) {
 
         bikeList.innerHTML =
             "<p>Ingen cykler oprettet endnu.</p>";
@@ -202,16 +1193,21 @@ async function loadAdminBikes() {
     }
 
 
-    bikeList.innerHTML = "";
+    bikeList.innerHTML =
+        "";
 
 
     data.forEach(bike => {
 
         const bikeElement =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
-        bikeElement.classList.add("admin-bike");
+        bikeElement.classList.add(
+            "admin-bike"
+        );
 
 
         bikeElement.innerHTML = `
@@ -223,17 +1219,23 @@ async function loadAdminBikes() {
 
             <p>
                 Status:
-                <strong>${bike.status}</strong>
+                <strong>
+                    ${bike.status}
+                </strong>
             </p>
 
             <p>
                 Indkøb:
-                ${formatPrice(bike.purchase_price)}
+                ${formatPrice(
+                    bike.purchase_price
+                )}
             </p>
 
             <p>
                 Salgspris:
-                ${formatPrice(bike.asking_price)}
+                ${formatPrice(
+                    bike.asking_price
+                )}
             </p>
 
             <p>
@@ -256,48 +1258,39 @@ async function loadAdminBikes() {
     });
 
 
-    const editButtons =
-        document.querySelectorAll(
+    document
+        .querySelectorAll(
             ".edit-bike-button"
-        );
+        )
+        .forEach(button => {
 
+            button.addEventListener(
+                "click",
+                async () => {
 
-    editButtons.forEach(button => {
-
-        button.addEventListener(
-            "click",
-            async () => {
-
-                const bikeId =
-                    button.dataset.bikeId;
-
-                await openEditBikeForm(
-                    bikeId
-                );
-            }
-        );
-    });
+                    await openEditBikeForm(
+                        button.dataset.bikeId
+                    );
+                }
+            );
+        });
 }
 
 
 // --------------------------------------------------
-// FIND NÆSTE BIKE ID
+// NÆSTE BIKE ID
 // --------------------------------------------------
 
 async function getNextBikeNumber() {
 
-    const { data, error } = await db
-        .from("bikes")
-        .select("bike_number");
+    const { data, error } =
+        await db
+            .from("bikes")
+            .select("bike_number");
 
 
     if (error) {
-
-        console.error(error);
-
-        throw new Error(
-            "Kunne ikke finde næste Bike ID."
-        );
+        throw error;
     }
 
 
@@ -314,21 +1307,20 @@ async function getNextBikeNumber() {
 
         if (match) {
 
-            highestNumber = Math.max(
-                highestNumber,
-                Number(match[1])
-            );
+            highestNumber =
+                Math.max(
+                    highestNumber,
+                    Number(match[1])
+                );
         }
     });
 
 
-    const nextNumber =
-        highestNumber + 1;
-
-
     return (
         "B" +
-        String(nextNumber).padStart(
+        String(
+            highestNumber + 1
+        ).padStart(
             4,
             "0"
         )
@@ -337,20 +1329,20 @@ async function getNextBikeNumber() {
 
 
 // --------------------------------------------------
-// ÅBN FORMULAR TIL NY CYKEL
+// NY CYKEL
 // --------------------------------------------------
 
 async function openNewBikeForm() {
 
     bikeForm.reset();
 
-    currentBikeImage.innerHTML =
+    currentBikeImages.innerHTML =
         "";
 
     imageUploadMessage.textContent =
         "";
 
-    bikeImageInput.value =
+    bikeFormMessage.textContent =
         "";
 
 
@@ -363,10 +1355,6 @@ async function openNewBikeForm() {
         "Ny cykel";
 
 
-    bikeFormMessage.textContent =
-        "";
-
-
     try {
 
         document.getElementById(
@@ -377,6 +1365,7 @@ async function openNewBikeForm() {
     } catch (error) {
 
         console.error(error);
+
 
         bikeFormMessage.textContent =
             "Kunne ikke generere Bike ID.";
@@ -402,10 +1391,12 @@ async function openNewBikeForm() {
 
 
 // --------------------------------------------------
-// ÅBN FORMULAR TIL REDIGERING
+// REDIGER CYKEL
 // --------------------------------------------------
 
-async function openEditBikeForm(bikeId) {
+async function openEditBikeForm(
+    bikeId
+) {
 
     bikeFormMessage.textContent =
         "";
@@ -413,7 +1404,7 @@ async function openEditBikeForm(bikeId) {
     imageUploadMessage.textContent =
         "";
 
-    bikeImageInput.value =
+    bikeImagesInput.value =
         "";
 
 
@@ -421,7 +1412,10 @@ async function openEditBikeForm(bikeId) {
         await db
             .from("bikes")
             .select("*")
-            .eq("id", bikeId)
+            .eq(
+                "id",
+                bikeId
+            )
             .single();
 
 
@@ -534,13 +1528,13 @@ async function openEditBikeForm(bikeId) {
         `Rediger ${bike.bike_number}`;
 
 
-    showCurrentBikeImage(
-        bike.bike_number
-    );
-
-
     bikeFormSection.hidden =
         false;
+
+
+    await showCurrentBikeImages(
+        bike.bike_number
+    );
 
 
     bikeFormSection.scrollIntoView({
@@ -568,7 +1562,7 @@ function closeBikeForm() {
         "";
 
 
-    currentBikeImage.innerHTML =
+    currentBikeImages.innerHTML =
         "";
 
     imageUploadMessage.textContent =
@@ -576,14 +1570,11 @@ function closeBikeForm() {
 
     bikeFormMessage.textContent =
         "";
-
-    bikeImageInput.value =
-        "";
 }
 
 
 // --------------------------------------------------
-// BYG DATA FRA FORMULAR
+// BYG CYKELDATA
 // --------------------------------------------------
 
 function buildBikeData() {
@@ -601,10 +1592,14 @@ function buildBikeData() {
             ).value.trim(),
 
         model:
-            getTextValue("model"),
+            getTextValue(
+                "model"
+            ),
 
         category:
-            getTextValue("category"),
+            getTextValue(
+                "category"
+            ),
 
         frame_size:
             getTextValue(
@@ -660,13 +1655,173 @@ function buildBikeData() {
 
 
 // --------------------------------------------------
-// LOGIN / ADMIN VISNING
+// UPLOAD NYE BILLEDER
+// --------------------------------------------------
+
+uploadImagesButton.addEventListener(
+    "click",
+    async () => {
+
+        imageUploadMessage.textContent =
+            "";
+
+
+        const bikeId =
+            document.getElementById(
+                "bike-id"
+            ).value;
+
+
+        const bikeNumber =
+            document.getElementById(
+                "bike-number"
+            ).value;
+
+
+        if (!bikeId) {
+
+            imageUploadMessage.textContent =
+                "Gem cyklen først, før du uploader billeder.";
+
+            return;
+        }
+
+
+        const selectedFiles =
+            Array.from(
+                bikeImagesInput.files
+            );
+
+
+        if (
+            selectedFiles.length === 0
+        ) {
+
+            imageUploadMessage.textContent =
+                "Vælg mindst ét billede.";
+
+            return;
+        }
+
+
+        const existingImages =
+            await getBikeImages(
+                bikeNumber
+            );
+
+
+        if (
+            existingImages.length +
+            selectedFiles.length >
+            MAX_IMAGES
+        ) {
+
+            imageUploadMessage.textContent =
+                `Der må højst være ${MAX_IMAGES} billeder.`;
+
+            return;
+        }
+
+
+        uploadImagesButton.disabled =
+            true;
+
+
+        try {
+
+            for (
+                let i = 0;
+                i < selectedFiles.length;
+                i++
+            ) {
+
+                imageUploadMessage.textContent =
+                    `Behandler billede ${
+                        i + 1
+                    } af ${
+                        selectedFiles.length
+                    }...`;
+
+
+                const compressedImage =
+                    await compressImage(
+                        selectedFiles[i]
+                    );
+
+
+                const imageNumber =
+                    existingImages.length +
+                    i +
+                    1;
+
+
+                const filePath =
+                    `${bikeNumber}/${imageFileName(
+                        imageNumber
+                    )}`;
+
+
+                const { error } =
+                    await db.storage
+                        .from(
+                            IMAGE_BUCKET
+                        )
+                        .upload(
+                            filePath,
+                            compressedImage,
+                            {
+                                upsert: false,
+                                contentType:
+                                    "image/webp"
+                            }
+                        );
+
+
+                if (error) {
+                    throw error;
+                }
+            }
+
+
+            imageUploadMessage.textContent =
+                `${selectedFiles.length} billede(r) uploadet.`;
+
+
+            bikeImagesInput.value =
+                "";
+
+
+            await showCurrentBikeImages(
+                bikeNumber
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            imageUploadMessage.textContent =
+                "Et eller flere billeder kunne ikke uploades.";
+
+        } finally {
+
+            uploadImagesButton.disabled =
+                false;
+        }
+    }
+);
+
+
+// --------------------------------------------------
+// LOGIN-VISNING
 // --------------------------------------------------
 
 async function showCorrectView() {
 
     const {
-        data: { session }
+        data: {
+            session
+        }
     } =
         await db.auth.getSession();
 
@@ -689,7 +1844,6 @@ async function showCorrectView() {
 
         adminSection.hidden =
             true;
-
     }
 }
 
@@ -700,7 +1854,7 @@ async function showCorrectView() {
 
 loginForm.addEventListener(
     "submit",
-    async (event) => {
+    async event => {
 
         event.preventDefault();
 
@@ -722,18 +1876,20 @@ loginForm.addEventListener(
 
 
         const { error } =
-            await db.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
+            await db.auth
+                .signInWithPassword({
+                    email,
+                    password
+                });
 
 
         if (error) {
 
             console.error(error);
 
+
             loginMessage.textContent =
-                "Login mislykkedes. Kontrollér e-mail og password.";
+                "Login mislykkedes.";
 
             return;
         }
@@ -766,175 +1922,28 @@ logoutButton.addEventListener(
 
 
 // --------------------------------------------------
-// NY CYKEL
+// KNAPPER
 // --------------------------------------------------
 
 newBikeButton.addEventListener(
     "click",
-    async () => {
-
-        await openNewBikeForm();
-    }
+    openNewBikeForm
 );
 
-
-// --------------------------------------------------
-// ANNULLER FORMULAR
-// --------------------------------------------------
 
 cancelBikeFormButton.addEventListener(
     "click",
-    () => {
-
-        closeBikeForm();
-    }
+    closeBikeForm
 );
 
 
 // --------------------------------------------------
-// UPLOAD HOVEDBILLEDE
-// --------------------------------------------------
-
-uploadImageButton.addEventListener(
-    "click",
-    async () => {
-
-        imageUploadMessage.textContent =
-            "";
-
-
-        const bikeNumber =
-            document.getElementById(
-                "bike-number"
-            ).value;
-
-
-        const bikeId =
-            document.getElementById(
-                "bike-id"
-            ).value;
-
-
-        const file =
-            bikeImageInput.files[0];
-
-
-        // Cyklen skal eksistere i databasen først
-
-        if (!bikeId) {
-
-            imageUploadMessage.textContent =
-                "Gem cyklen først, før du uploader billeder.";
-
-            return;
-        }
-
-
-        if (!file) {
-
-            imageUploadMessage.textContent =
-                "Vælg et billede først.";
-
-            return;
-        }
-
-
-        imageUploadMessage.textContent =
-            "Uploader...";
-
-
-        // Midlertidig V1-konvention:
-        // hovedbilledet hedder altid 01.png
-
-        const filePath =
-            `${bikeNumber}/01.png`;
-
-
-        const { error } =
-            await db.storage
-                .from("bike-images")
-                .upload(
-                    filePath,
-                    file,
-                    {
-                        upsert: false,
-                        contentType: file.type
-                    }
-                );
-
-
-        if (error) {
-
-            console.error(error);
-
-            imageUploadMessage.textContent =
-                "Billedet kunne ikke uploades.";
-
-            return;
-        }
-
-
-        imageUploadMessage.textContent =
-            "Billedet er uploadet.";
-
-
-        // Tving browseren til at hente
-        // den nye version af billedet
-
-        const imagePath =
-            `${bikeNumber}/01.png`;
-
-
-        const { data } = db.storage
-            .from("bike-images")
-            .getPublicUrl(imagePath);
-
-
-        currentBikeImage.innerHTML =
-            "";
-
-
-        const image =
-            document.createElement("img");
-
-
-        image.src =
-            `${data.publicUrl}?t=${Date.now()}`;
-
-        image.alt =
-            `Hovedbillede af ${bikeNumber}`;
-
-        image.style.maxWidth =
-            "300px";
-
-        image.style.height =
-            "auto";
-
-        image.style.display =
-            "block";
-
-        image.style.marginTop =
-            "10px";
-
-
-        currentBikeImage.appendChild(
-            image
-        );
-
-
-        bikeImageInput.value =
-            "";
-    }
-);
-
-
-// --------------------------------------------------
-// GEM NY ELLER REDIGERET CYKEL
+// GEM CYKEL
 // --------------------------------------------------
 
 bikeForm.addEventListener(
     "submit",
-    async (event) => {
+    async event => {
 
         event.preventDefault();
 
@@ -956,42 +1965,42 @@ bikeForm.addEventListener(
         let error;
 
 
-        // REDIGER EKSISTERENDE
-
         if (bikeId) {
 
             const result =
                 await db
                     .from("bikes")
-                    .update(bikeData)
-                    .eq("id", bikeId);
+                    .update(
+                        bikeData
+                    )
+                    .eq(
+                        "id",
+                        bikeId
+                    );
 
 
             error =
                 result.error;
 
-        }
-
-
-        // OPRET NY
-
-        else {
+        } else {
 
             const result =
                 await db
                     .from("bikes")
-                    .insert(bikeData);
+                    .insert(
+                        bikeData
+                    );
 
 
             error =
                 result.error;
-
         }
 
 
         if (error) {
 
             console.error(error);
+
 
             bikeFormMessage.textContent =
                 "Cyklen kunne ikke gemmes.";
@@ -1001,7 +2010,6 @@ bikeForm.addEventListener(
 
 
         await loadAdminBikes();
-
 
         closeBikeForm();
     }
