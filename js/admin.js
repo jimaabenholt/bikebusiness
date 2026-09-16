@@ -1459,6 +1459,12 @@ async function openEditBikeForm(
 
 
     document.getElementById(
+        "main-category"
+    ).value =
+        bike.main_category ?? "";
+
+
+    document.getElementById(
         "category"
     ).value =
         bike.category ?? "";
@@ -1595,6 +1601,11 @@ function buildBikeData() {
             getTextValue(
                 "model"
             ),
+
+        main_category:
+            document.getElementById(
+                "main-category"
+            ).value,
 
         category:
             getTextValue(

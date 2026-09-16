@@ -11,13 +11,44 @@
 
 <body>
 
-    <header>
-        <a href="index.html">← Tilbage til cykler</a>
+    <header class="site-header">
+
+        <div class="site-brand">
+            <a href="index.html">
+                Bikebusiness
+            </a>
+        </div>
+
+        <nav class="site-nav">
+            <a href="index.html#categories">
+                Cykler
+            </a>
+
+            <a href="index.html#about">
+                Om os
+            </a>
+        </nav>
+
     </header>
 
+
     <main id="bike-detail">
-        <p>Henter cykel...</p>
+
+        <div class="bike-loading">
+            <p>Henter cykel...</p>
+        </div>
+
     </main>
+
+
+    <footer class="site-footer">
+
+        <p>
+            Bikebusiness · Istandsatte brugte cykler · Ringe
+        </p>
+
+    </footer>
+
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/bike.js"></script>

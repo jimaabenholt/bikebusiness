@@ -36,7 +36,9 @@
                 <input type="password" id="password" required>
             </p>
 
-            <button type="submit">Log ind</button>
+            <button type="submit">
+                Log ind
+            </button>
 
         </form>
 
@@ -76,61 +78,161 @@
 
 
                 <p>
-                    <label for="bike-number">Bike ID</label><br>
-                    <input type="text" id="bike-number" required readonly>
+                    <label for="bike-number">
+                        Bike ID
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="bike-number"
+                        required
+                        readonly
+                    >
                 </p>
 
 
                 <p>
-                    <label for="brand">Mærke *</label><br>
-                    <input type="text" id="brand" required>
+                    <label for="brand">
+                        Mærke *
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="brand"
+                        required
+                    >
                 </p>
 
 
                 <p>
-                    <label for="model">Model</label><br>
-                    <input type="text" id="model">
+                    <label for="model">
+                        Model
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="model"
+                    >
+                </p>
+
+
+                <!-- HOVEDKATEGORI -->
+
+                <p>
+                    <label for="main-category">
+                        Hovedkategori *
+                    </label><br>
+
+                    <select
+                        id="main-category"
+                        required
+                    >
+
+                        <option value="">
+                            Vælg hovedkategori
+                        </option>
+
+                        <option value="MEN">
+                            Herrecykler
+                        </option>
+
+                        <option value="WOMEN">
+                            Damecykler
+                        </option>
+
+                        <option value="KIDS">
+                            Børnecykler
+                        </option>
+
+                        <option value="OTHER">
+                            Diverse
+                        </option>
+
+                    </select>
+                </p>
+
+
+                <!-- CYKELTYPE -->
+
+                <p>
+                    <label for="category">
+                        Cykeltype
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="category"
+                        placeholder="Fx Citybike, Racer, MTB eller Hybrid"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="category">Kategori</label><br>
-                    <input type="text" id="category">
+                    <label for="frame-size">
+                        Stelstørrelse
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="frame-size"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="frame-size">Stelstørrelse</label><br>
-                    <input type="text" id="frame-size">
+                    <label for="wheel-size">
+                        Hjulstørrelse
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="wheel-size"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="wheel-size">Hjulstørrelse</label><br>
-                    <input type="text" id="wheel-size">
+                    <label for="gears">
+                        Antal gear
+                    </label><br>
+
+                    <input
+                        type="number"
+                        id="gears"
+                        min="0"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="gears">Antal gear</label><br>
-                    <input type="number" id="gears" min="0">
+                    <label for="color">
+                        Farve
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="color"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="color">Farve</label><br>
-                    <input type="text" id="color">
+                    <label for="frame-number">
+                        Stelnummer
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="frame-number"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="frame-number">Stelnummer</label><br>
-                    <input type="text" id="frame-number">
-                </p>
+                    <label for="purchase-price">
+                        Indkøbspris
+                    </label><br>
 
-
-                <p>
-                    <label for="purchase-price">Indkøbspris</label><br>
                     <input
                         type="number"
                         id="purchase-price"
@@ -141,13 +243,21 @@
 
 
                 <p>
-                    <label for="purchase-source">Indkøbskilde</label><br>
-                    <input type="text" id="purchase-source">
+                    <label for="purchase-source">
+                        Indkøbskilde
+                    </label><br>
+
+                    <input
+                        type="text"
+                        id="purchase-source"
+                    >
                 </p>
 
 
                 <p>
-                    <label for="sales-description">Salgstekst</label><br>
+                    <label for="sales-description">
+                        Salgstekst
+                    </label><br>
 
                     <textarea
                         id="sales-description"
@@ -157,7 +267,9 @@
 
 
                 <p>
-                    <label for="asking-price">Salgspris</label><br>
+                    <label for="asking-price">
+                        Salgspris
+                    </label><br>
 
                     <input
                         type="number"
@@ -169,7 +281,9 @@
 
 
                 <p>
-                    <label for="status">Status</label><br>
+                    <label for="status">
+                        Status
+                    </label><br>
 
                     <select id="status">
 

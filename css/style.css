@@ -1,62 +1,450 @@
+/* =========================================
+   FARVER / GRUNDLAYOUT
+   ========================================= */
+
+:root {
+    --text: #242321;
+    --muted: #6f6b65;
+    --border: #dedbd6;
+    --warm: #f2eee7;
+    --warm-light: #faf8f5;
+    --white: #ffffff;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: Arial, sans-serif;
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0 24px;
     line-height: 1.5;
+    color: var(--text);
+    background: var(--white);
 }
 
-header {
-    padding: 40px 0;
-    border-bottom: 1px solid #ddd;
+a {
+    color: inherit;
 }
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.site-header {
+    min-height: 80px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.site-brand a {
+    font-size: 22px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.site-nav {
+    display: flex;
+    gap: 24px;
+}
+
+.site-nav a {
+    text-decoration: none;
+}
+
+.site-nav a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   MAIN
+   ========================================= */
 
 main {
-    padding: 30px 0;
+    padding: 0;
 }
+
+
+/* =========================================
+   HERO
+   ========================================= */
+
+.hero {
+    padding: 90px 0 100px;
+    max-width: 800px;
+}
+
+.hero h1 {
+    font-size: clamp(32px, 6vw, 62px);
+    line-height: 1.05;
+    margin: 10px 0 24px;
+    letter-spacing: -2px;
+}
+
+.hero-text {
+    max-width: 650px;
+    font-size: 22px;
+    color: var(--muted);
+    margin-bottom: 32px;
+}
+
+.hero-eyebrow,
+.section-eyebrow {
+    margin: 0;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+}
+
+
+/* =========================================
+   KNAPPER
+   ========================================= */
+
+.primary-button,
+.secondary-button,
+.bike-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+    padding: 11px 18px;
+
+    border: 1px solid var(--text);
+    border-radius: 6px;
+
+    text-decoration: none;
+    font: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.primary-button {
+    background: var(--text);
+    color: var(--white);
+}
+
+.secondary-button,
+.bike-link {
+    background: var(--white);
+    color: var(--text);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.bike-link:hover {
+    opacity: 0.8;
+}
+
+
+/* =========================================
+   SEKTIONER
+   ========================================= */
+
+.category-section,
+.bike-section,
+.about-section {
+    padding: 70px 0;
+    border-top: 1px solid var(--border);
+}
+
+.section-heading {
+    margin-bottom: 35px;
+}
+
+.section-heading h2,
+.bike-section-header h2,
+.about-section h2 {
+    font-size: 36px;
+    line-height: 1.15;
+    margin: 8px 0 0;
+}
+
+
+/* =========================================
+   KATEGORIER
+   ========================================= */
+
+.category-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.category-card {
+    min-height: 250px;
+    padding: 24px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--warm-light);
+    color: var(--text);
+
+    text-align: left;
+    font: inherit;
+
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+
+    transition:
+        border-color 0.15s ease,
+        background 0.15s ease;
+}
+
+.category-card:hover {
+    border-color: #aaa49b;
+    background: var(--warm);
+}
+
+.category-card.active {
+    border: 2px solid var(--text);
+    background: var(--warm);
+}
+
+.category-title {
+    display: block;
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+.category-description {
+    display: block;
+    color: var(--muted);
+}
+
+.category-link {
+    display: block;
+    margin-top: auto;
+    padding-top: 25px;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   CYKELSEKTION
+   ========================================= */
+
+.bike-section-header {
+    margin-bottom: 35px;
+
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+#bike-list {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: start;
+}
+
+
+/* =========================================
+   CYKELKORT
+   ========================================= */
 
 .bike-card {
-    max-width: 700px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    overflow: hidden;
-    margin-bottom: 30px;
-}
-
-.bike-image {
-    display: block;
     width: 100%;
-    height: auto;
+    max-width: none;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+
+    margin: 0;
+    background: var(--white);
 }
 
-.bike-content {
+.bike-card-image-link {
+    display: block;
+    text-decoration: none;
+    background: var(--warm-light);
+}
+
+.bike-card img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+}
+
+.bike-no-image {
+    width: 100%;
+    height: 260px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--warm);
+    color: var(--muted);
+}
+
+.bike-card-content {
     padding: 20px;
 }
 
-.bike-content h3 {
-    margin-top: 0;
-    font-size: 26px;
-}
+.bike-card-category {
+    display: inline-block;
 
-.bike-specs {
-    color: #666;
-}
+    margin: 0 0 10px;
+    padding: 5px 9px;
 
-.bike-price {
-    font-size: 24px;
+    border-radius: 4px;
+
+    background: var(--warm);
+
+    font-size: 12px;
     font-weight: bold;
-    margin-bottom: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    color: var(--muted);
+}
+
+.bike-card h3 {
+    margin: 0 0 18px;
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+.bike-card h3 a {
+    text-decoration: none;
+}
+
+.bike-card h3 a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   SPECIFIKATIONER PÅ CYKELKORT
+   ========================================= */
+
+.bike-card-specs {
+    margin: 0;
+    border-top: 1px solid var(--border);
+}
+
+.bike-spec-row {
+    min-height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 8px 0;
+
+    border-bottom: 1px solid var(--border);
+
+    font-size: 14px;
+}
+
+.bike-spec-row span {
+    color: var(--muted);
+}
+
+.bike-spec-row strong {
+    text-align: right;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   PRIS / LINK
+   ========================================= */
+
+.bike-card-price {
+    margin: 20px 0 12px;
+    font-size: 25px;
+    font-weight: bold;
 }
 
 .bike-link {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 16px;
-    border: 1px solid #333;
-    border-radius: 5px;
-    color: #333;
-    text-decoration: none;
+    width: 100%;
 }
+
+.empty-bike-list {
+    grid-column: 1 / -1;
+
+    padding: 40px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    background: var(--warm-light);
+
+    text-align: center;
+}
+
+
+/* =========================================
+   OM
+   ========================================= */
+
+.about-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+
+    margin-top: 20px;
+    padding-left: 35px;
+    padding-right: 35px;
+
+    background: var(--warm-light);
+    border-radius: 10px;
+}
+
+.about-content {
+    font-size: 18px;
+    color: var(--muted);
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.site-footer {
+    margin-top: 70px;
+    padding: 35px 0;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--muted);
+}
+
+
+/* =========================================
+   DETALJESIDE
+   ========================================= */
 
 .bike-gallery {
     display: grid;
@@ -69,105 +457,89 @@ main {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .bike-specifications {
     display: grid;
     grid-template-columns: 160px 1fr;
-    max-width: 600px;
+
+    width: 100%;
+    max-width: 650px;
+
+    margin: 25px 0;
+
+    border-top: 1px solid var(--border);
 }
 
 .bike-specifications dt,
 .bike-specifications dd {
-    padding: 8px 0;
-    border-bottom: 1px solid #ddd;
+    padding: 11px 8px;
+    border-bottom: 1px solid var(--border);
 }
 
 .bike-specifications dt {
-    font-weight: bold;
+    font-weight: normal;
+    color: var(--muted);
 }
 
 .bike-specifications dd {
     margin: 0;
-}
-
-@media (max-width: 700px) {
-
-    .bike-gallery {
-        grid-template-columns: 1fr;
-    }
-
-    .bike-specifications {
-        grid-template-columns: 1fr;
-    }
-
-    .bike-specifications dd {
-        padding-top: 0;
-    }
-}
-
-/* =========================================
-   CYKELBILLEDER
-   ========================================= */
-
-
-/* Billeder på katalog/forside */
-
-.bike-card img {
-    width: 100%;
-    height: 260px;
-    object-fit: cover;
-    display: block;
-}
-
-
-/* Maksimal bredde på cykelkort */
-
-.bike-card {
-    max-width: 420px;
-}
-
-
-/* Hvis cyklen ikke har et billede */
-
-.bike-no-image {
-    width: 100%;
-    height: 260px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #eeeeee;
+    font-weight: 600;
 }
 
 
 /* =========================================
-   DETALJESIDE
+   DETALJESIDE - BILLEDER
    ========================================= */
 
 .bike-images {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
     gap: 16px;
+
     max-width: 1000px;
+
     margin: 24px 0;
 }
-
 
 .bike-images img {
     width: 100%;
     height: 360px;
+
     object-fit: cover;
     display: block;
+
+    border-radius: 8px;
 }
-
-
-/* Første billede er hovedbilledet */
 
 .bike-images img:first-child {
     grid-column: 1 / -1;
     height: 560px;
 }
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 950px) {
+
+    .category-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    #bike-list {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
 
 /* =========================================
    MOBIL
@@ -175,16 +547,931 @@ main {
 
 @media (max-width: 700px) {
 
+    body {
+        padding: 0 16px;
+    }
+
+
+    /* HEADER */
+
+    .site-header {
+        min-height: auto;
+
+        padding: 16px 0;
+
+        align-items: center;
+        flex-direction: row;
+
+        gap: 15px;
+    }
+
+    .site-brand a {
+        font-size: 19px;
+    }
+
+    .site-nav {
+        gap: 16px;
+        font-size: 14px;
+    }
+
+
+    /* HERO */
+
+    .hero {
+        padding: 48px 0 55px;
+    }
+
+    .hero h1 {
+        font-size: 42px;
+        line-height: 1.03;
+
+        margin-top: 8px;
+
+        letter-spacing: -1.5px;
+    }
+
+    .hero-text {
+        font-size: 18px;
+        line-height: 1.5;
+
+        margin-bottom: 26px;
+    }
+
+    .primary-button {
+        width: 100%;
+        min-height: 50px;
+    }
+
+
+    /* SEKTIONER */
+
+    .category-section,
+    .bike-section,
+    .about-section {
+        padding: 45px 0;
+    }
+
+    .section-heading {
+        margin-bottom: 24px;
+    }
+
+    .section-heading h2,
+    .bike-section-header h2,
+    .about-section h2 {
+        font-size: 29px;
+    }
+
+
+    /* KATEGORIER */
+
+    .category-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .category-card {
+        min-height: auto;
+        padding: 18px;
+
+        border-radius: 8px;
+    }
+
+    .category-title {
+        margin-bottom: 6px;
+        font-size: 21px;
+    }
+
+    .category-description {
+        font-size: 14px;
+    }
+
+    .category-link {
+        margin-top: 14px;
+        padding-top: 0;
+        font-size: 14px;
+    }
+
+
+    /* CYKLER */
+
+    .bike-section-header {
+        margin-bottom: 24px;
+
+        align-items: stretch;
+        flex-direction: column;
+
+        gap: 16px;
+    }
+
+    .secondary-button {
+        width: 100%;
+    }
+
+    #bike-list {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+
+    /* CYKELKORT */
+
+    .bike-card {
+        border-radius: 8px;
+    }
+
+    .bike-card img,
+    .bike-no-image {
+        height: auto;
+        min-height: 220px;
+        max-height: 360px;
+    }
+
+    .bike-card img {
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+    .bike-card-content {
+        padding: 17px;
+    }
+
+    .bike-card-category {
+        margin-bottom: 9px;
+    }
+
+    .bike-card h3 {
+        margin-bottom: 15px;
+        font-size: 23px;
+    }
+
+    .bike-spec-row {
+        min-height: 40px;
+        padding: 9px 0;
+        font-size: 15px;
+    }
+
+    .bike-card-price {
+        margin-top: 18px;
+        font-size: 26px;
+    }
+
+    .bike-link {
+        min-height: 50px;
+    }
+
+
+    /* OM */
+
+    .about-section {
+        display: block;
+
+        margin-left: -16px;
+        margin-right: -16px;
+
+        padding-left: 16px;
+        padding-right: 16px;
+
+        border-radius: 0;
+    }
+
+    .about-content {
+        margin-top: 24px;
+        font-size: 16px;
+    }
+
+
+    /* DETALJESIDE */
+
+    .bike-gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .bike-specifications {
+        grid-template-columns: 42% 58%;
+        max-width: none;
+    }
+
+    .bike-specifications dt,
+    .bike-specifications dd {
+        padding: 11px 6px;
+    }
+
+
+    /* BILLEDER PÅ DETALJESIDE */
+
     .bike-images {
         grid-template-columns: 1fr;
+        gap: 10px;
+
+        margin-left: -16px;
+        margin-right: -16px;
     }
 
     .bike-images img,
     .bike-images img:first-child {
         grid-column: auto;
+
+        width: 100%;
         height: auto;
-        max-height: 500px;
+        max-height: none;
+
+        border-radius: 0;
+
         object-fit: contain;
+    }
+
+
+    /* FOOTER */
+
+    .site-footer {
+        margin-top: 40px;
+        padding: 25px 0;
+
+        font-size: 14px;
+    }
+
+}
+
+
+/* =========================================
+   MEGET SMÅ MOBILER
+   ========================================= */
+
+@media (max-width: 380px) {
+
+    body {
+        padding: 0 12px;
+    }
+
+    .site-nav {
+        gap: 10px;
+        font-size: 13px;
+    }
+
+    .hero h1 {
+        font-size: 37px;
+    }
+
+    .about-section {
+        margin-left: -12px;
+        margin-right: -12px;
+
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .bike-images {
+        margin-left: -12px;
+        margin-right: -12px;
+    }
+
+}
+
+/* =========================================
+   NY CYKEL-DETALJESIDE
+   ========================================= */
+
+#bike-detail {
+    padding: 30px 0 0;
+}
+
+.bike-detail-back {
+    margin-bottom: 22px;
+}
+
+.bike-detail-back a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.bike-detail-back a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================
+   PRODUKT-TOP
+   ========================================= */
+
+.bike-detail-product {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.35fr)
+        minmax(320px, 0.65fr);
+
+    gap: 42px;
+
+    align-items: start;
+}
+
+
+/* =========================================
+   HOVEDBILLEDE
+   ========================================= */
+
+.bike-detail-main-image-wrapper {
+    width: 100%;
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: var(--warm-light);
+}
+
+.bike-detail-main-image {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    max-height: 620px;
+
+    object-fit: contain;
+}
+
+.bike-detail-no-image {
+    min-height: 480px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--warm);
+
+    color: var(--muted);
+}
+
+
+/* =========================================
+   PRODUKTINFO
+   ========================================= */
+
+.bike-detail-info-column {
+    position: sticky;
+    top: 20px;
+}
+
+.bike-detail-category {
+    display: inline-block;
+
+    margin: 0 0 10px;
+    padding: 5px 9px;
+
+    border-radius: 4px;
+
+    background: var(--warm);
+
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    color: var(--muted);
+}
+
+.bike-detail-info-column h1 {
+    margin: 0 0 15px;
+
+    font-size: clamp(
+        32px,
+        4vw,
+        48px
+    );
+
+    line-height: 1.05;
+    letter-spacing: -1px;
+}
+
+.bike-detail-price {
+    margin: 0 0 24px;
+
+    font-size: 32px;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   SPECIFIKATIONER
+   ========================================= */
+
+.bike-detail-specs {
+    width: 100%;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.bike-detail-spec-row {
+    min-height: 43px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(90px, 0.7fr)
+        minmax(0, 1.3fr);
+
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 9px 4px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    font-size: 15px;
+}
+
+.bike-detail-spec-row span {
+    color: var(--muted);
+}
+
+.bike-detail-spec-row strong {
+    text-align: right;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   FREMVISNING
+   ========================================= */
+
+.bike-detail-viewing {
+    margin-top: 24px;
+    padding: 18px;
+
+    border-radius: 8px;
+
+    background: var(--warm-light);
+}
+
+.bike-detail-viewing strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.bike-detail-viewing p {
+    margin: 0;
+    color: var(--muted);
+}
+
+
+/* =========================================
+   BESKRIVELSE / KLARGØRING
+   ========================================= */
+
+.bike-detail-text-section,
+.bike-detail-work-section,
+.bike-detail-gallery-section {
+    display: grid;
+
+    grid-template-columns:
+        minmax(220px, 0.35fr)
+        minmax(0, 0.65fr);
+
+    gap: 50px;
+
+    margin-top: 65px;
+    padding-top: 45px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.bike-detail-section-heading h2 {
+    margin: 7px 0 0;
+
+    font-size: 29px;
+    line-height: 1.15;
+}
+
+.bike-detail-text,
+.bike-detail-work {
+    max-width: 700px;
+
+    font-size: 17px;
+    line-height: 1.65;
+}
+
+.bike-detail-text p,
+.bike-detail-work p {
+    margin-top: 0;
+}
+
+
+/* =========================================
+   GALLERI
+   ========================================= */
+
+.bike-detail-gallery {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            3,
+            minmax(0, 1fr)
+        );
+
+    gap: 12px;
+}
+
+.bike-detail-gallery img {
+    display: block;
+
+    width: 100%;
+    aspect-ratio: 4 / 3;
+
+    object-fit: cover;
+
+    border-radius: 7px;
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .bike-detail-product {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(280px, 0.75fr);
+
+        gap: 25px;
+    }
+
+    .bike-detail-gallery {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+    }
+
+}
+
+
+/* =========================================
+   MOBIL
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    #bike-detail {
+        padding-top: 18px;
+    }
+
+
+    /* TILBAGE */
+
+    .bike-detail-back {
+        margin-bottom: 14px;
+    }
+
+
+    /* PRODUKT */
+
+    .bike-detail-product {
+        display: flex;
+        flex-direction: column;
+
+        gap: 0;
+    }
+
+
+    /* INFORMATION FØR BILLEDET */
+
+    .bike-detail-info-column {
+        display: contents;
+        position: static;
+    }
+
+    .bike-detail-category {
+        order: 1;
+
+        align-self: flex-start;
+
+        margin-bottom: 7px;
+    }
+
+    .bike-detail-info-column h1 {
+        order: 2;
+
+        margin-bottom: 16px;
+
+        font-size: 32px;
+        letter-spacing: -0.7px;
+    }
+
+
+    /* HOVEDBILLEDE */
+
+    .bike-detail-image-column {
+        order: 3;
+
+        width: calc(
+            100% + 32px
+        );
+
+        margin-left: -16px;
+    }
+
+    .bike-detail-main-image-wrapper {
+        border-radius: 0;
+    }
+
+    .bike-detail-main-image {
+        width: 100%;
+        max-height: none;
+
+        object-fit: contain;
+    }
+
+    .bike-detail-no-image {
+        min-height: 280px;
+        border-radius: 0;
+    }
+
+
+    /* PRIS */
+
+    .bike-detail-price {
+        order: 4;
+
+        width: 100%;
+
+        margin: 18px 0 12px;
+
+        font-size: 29px;
+    }
+
+
+    /* SPECS */
+
+    .bike-detail-specs {
+        order: 5;
+        width: 100%;
+    }
+
+    .bike-detail-spec-row {
+        min-height: 40px;
+
+        padding: 8px 2px;
+
+        font-size: 14px;
+    }
+
+
+    /* FREMVISNING */
+
+    .bike-detail-viewing {
+        order: 6;
+
+        width: 100%;
+
+        margin-top: 18px;
+        padding: 15px;
+    }
+
+
+    /* TEKSTSEKTIONER */
+
+    .bike-detail-text-section,
+    .bike-detail-work-section,
+    .bike-detail-gallery-section {
+        display: block;
+
+        margin-top: 38px;
+        padding-top: 30px;
+    }
+
+    .bike-detail-section-heading {
+        margin-bottom: 15px;
+    }
+
+    .bike-detail-section-heading h2 {
+        font-size: 25px;
+    }
+
+    .bike-detail-text,
+    .bike-detail-work {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+
+    /* GALLERI */
+
+    .bike-detail-gallery {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+
+        gap: 6px;
+    }
+
+    .bike-detail-gallery img {
+        border-radius: 4px;
+    }
+
+}
+
+/* =========================================
+   MEGET SMÅ MOBILER
+   ========================================= */
+
+@media (max-width: 380px) {
+
+    .bike-detail-image-column {
+        width: calc(
+            100% + 24px
+        );
+
+        margin-left: -12px;
+    }
+
+    .bike-detail-info-column h1 {
+        font-size: 29px;
+    }
+
+    .bike-detail-price {
+        font-size: 27px;
+    }
+
+}
+
+/* =========================================
+   LIGHTBOX
+   ========================================= */
+
+.lightbox-image {
+    cursor: zoom-in;
+}
+
+.image-lightbox[hidden] {
+    display: none;
+}
+
+.image-lightbox {
+    position: fixed;
+    inset: 0;
+
+    z-index: 1000;
+
+    display: grid;
+
+    grid-template-columns:
+        70px
+        minmax(0, 1fr)
+        70px;
+
+    align-items: center;
+
+    background:
+        rgba(20, 20, 20, 0.96);
+}
+
+.lightbox-content {
+    width: 100%;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 10px;
+}
+
+.lightbox-content img {
+    display: block;
+
+    max-width: 100%;
+    max-height: calc(100vh - 90px);
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+}
+
+.lightbox-close {
+    position: absolute;
+
+    top: 12px;
+    right: 18px;
+
+    z-index: 1002;
+
+    width: 48px;
+    height: 48px;
+
+    padding: 0;
+
+    border: 0;
+
+    background: transparent;
+    color: white;
+
+    font-size: 38px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.lightbox-navigation {
+    width: 54px;
+    height: 70px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 6px;
+
+    background:
+        rgba(255, 255, 255, 0.1);
+
+    color: white;
+
+    font-size: 48px;
+    line-height: 1;
+
+    cursor: pointer;
+}
+
+.lightbox-navigation:hover {
+    background:
+        rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-previous {
+    justify-self: center;
+}
+
+.lightbox-next {
+    justify-self: center;
+}
+
+.lightbox-counter {
+    margin-top: 12px;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+body.lightbox-open {
+    overflow: hidden;
+}
+
+/* =========================================
+   LIGHTBOX - MOBIL
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .image-lightbox {
+        grid-template-columns:
+            48px
+            minmax(0, 1fr)
+            48px;
+    }
+
+    .lightbox-content {
+        padding:
+            55px 0
+            45px;
+    }
+
+    .lightbox-content img {
+        max-height:
+            calc(100vh - 120px);
+    }
+
+    .lightbox-navigation {
+        width: 42px;
+        height: 60px;
+
+        border-radius: 0;
+
+        background:
+            rgba(255, 255, 255, 0.08);
+
+        font-size: 40px;
+    }
+
+    .lightbox-close {
+        top: 8px;
+        right: 8px;
+
+        width: 48px;
+        height: 48px;
     }
 
 }
